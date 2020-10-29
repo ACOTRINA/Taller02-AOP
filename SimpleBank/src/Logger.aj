@@ -2,10 +2,24 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-public aspect Logger {
 
+public aspect Logger {
+	
+	pointcut successA() : call(* create*(..) );
+    after() : successA() { 
+    	System.out.println("**** User created ****");
+    }
+    
+    File file = new File("log.txt");
+    Calendar cal = Calendar.getInstance();
+    pointcut successB() : call(* create*(..) );
+    after() : successB() {
+    	System.out.println("**** User created ****");
+    }
+	
     pointcut successT() : call(* moneyMakeTransaction*(..) );    
     after() : successT() {
     	try(BufferedWriter bw = new BufferedWriter(new FileWriter(new File("log.txt"),true))){
