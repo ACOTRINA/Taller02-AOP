@@ -12,37 +12,29 @@ public aspect Logger {
     //Aspecto ejemplo: solo muestra este mensaje después de haber creado un usuario 
     	System.out.println("**** User created ****");
     }
-    pointcut success2() : call(* *.moneyMakeTransaction() );
-    after() : success2() {
+    pointcut tramite() : call(* *.money*() );
+    after() : tramite() {
     	try(
     			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("log.txt"),true)))
     		{
     			SimpleDateFormat dateFormat  = new SimpleDateFormat("HH:mm:ss");
     			Date fecha = new Date();  
-    			bw.write("Transacción realizada a las: "+dateFormat.format(fecha));
-    			bw.newLine();
+    			if(thisJoinPoint.getSignature().getName().startsWith("moneyW")) {
+    				bw.write("Retiro realizado a las: "+dateFormat.format(fecha));
+    				System.out.println("\n Withdrawal  "+dateFormat.format(fecha));
+    				System.out.println("**** Withdrawal created ****");
+    			}else if(thisJoinPoint.getSignature().getName().startsWith("moneyM")) {
+    				bw.write("Transacción realizada a las: "+dateFormat.format(fecha));
+    				System.out.println("\n Transaction  "+dateFormat.format(fecha));
+    				System.out.println("**** Transaction created ****");
+    			}  	
+    			bw.newLine();	
  		       	bw.flush(); 
- 		        System.out.println("\n Transaction  "+dateFormat.format(fecha));
+ 		        
     		} catch (IOException e) {
     			e.printStackTrace();
     		}
-    	System.out.println("**** Transaction created ****");
-    }
-    pointcut success3() : call(* *.moneyWithdrawal() );
-    after() : success3() {
-    	try(
-    			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("log.txt"),true)))
-    		{
-    			SimpleDateFormat dateFormat  = new SimpleDateFormat("HH:mm:ss");
-    			Date fecha = new Date();  
-    			bw.write("Retiro realizado a las: "+dateFormat.format(fecha));
-    			bw.newLine();
- 		       	bw.flush();
- 		        System.out.println("\n Withdrawal  "+dateFormat.format(fecha));
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    		}
-    	System.out.println("**** Withdrawal created ****");
+    	
     }
     
 }
